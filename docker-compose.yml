@@ -1,0 +1,33 @@
+version: "3.3"
+services:
+  db:
+    container_name: postgres-db
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: eatsleepcode
+      POSTGRES_USER: dbuser
+      POSTGRES_DB: db
+    volumes:
+      - ./server/pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: server
+    image: backend
+    depends_on:
+      - db
+    ports:
+      - "4192:4192"
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    container_name: client
+    image: frontend
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
